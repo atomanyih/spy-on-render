@@ -15,6 +15,10 @@
   "bugs": {
     "url": "https://github.com/atomanyih/spy-on-render/issues"
   },
+  "keywords": [
+    "jasmine",
+    "react"
+  ],
   "homepage": "https://github.com/atomanyih/spy-on-render#readme",
   "devDependencies": {
     "babel": "^6.3.26",
