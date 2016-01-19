@@ -1,15 +1,12 @@
 require('./spec_helper');
 
+require('../index');
+
 const React = require('react');
 const ReactDOM = require('react-dom');
-const {spyOnRender, customMatchers} = require('../src/spy_on_render');
 
 describe('spyOnRender', () => {
   let Component;
-
-  beforeEach(() => {
-    jasmine.addMatchers(customMatchers);
-  });
 
   function itDoesTheThing() {
     it('sanity check', () => {
