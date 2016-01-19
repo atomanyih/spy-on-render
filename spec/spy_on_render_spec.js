@@ -51,6 +51,21 @@ describe('spyOnRender', () => {
         });
       });
     });
+
+    describe('toHaveBeenRendered', () => {
+      beforeEach(() => {
+        spyOnRender(Component).and.returnValue(null);
+      });
+
+      it('passes if component was rendered', () => {
+        ReactDOM.render(<Component />, root);
+        expect(Component).toHaveBeenRendered();
+      });
+
+      it('matches negative', () => {
+        expect(Component).not.toHaveBeenRendered();
+      });
+    });
   }
 
   describe('with React.createClass', () => {

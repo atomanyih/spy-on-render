@@ -39,6 +39,27 @@ module.exports = {
           return result;
         }
       };
+    },
+    toHaveBeenRendered() {
+      return {
+        compare(actual) {
+          let result = {};
+
+          const mostRecentCall = actual.prototype.render.calls.mostRecent();
+
+          const displayClass = actual.displayName;
+
+          if(mostRecentCall) {
+            result.pass = true;
+            result.message = `Expected ${displayClass} not to have been rendered`;
+          } else {
+            result.pass = false;
+            result.message = `Expected ${displayClass} to have been rendered`;
+          }
+
+          return result;
+        }
+      }
     }
   }
 };
