@@ -1,6 +1,6 @@
 module.exports = {
   spyOnRender(componentClass) {
-    return spyOn(componentClass.prototype, 'render');
+    return spyOn(componentClass.prototype, 'render').and.returnValue(null);
   },
   customMatchers: {
     toHaveBeenRenderedWithProps(util, customEqualityTesters) {

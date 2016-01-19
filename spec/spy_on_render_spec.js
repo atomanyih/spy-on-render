@@ -15,17 +15,27 @@ describe('spyOnRender', () => {
       expect('#root').toContainText('HOO BOY');
     });
 
-    it('stubs render', () => {
-      spyOnRender(Component).and.returnValue(null);
+    describe('spy', () => {
+      it('renders nothing by default', () => {
+        spyOnRender(Component);
 
-      ReactDOM.render(<Component />, root);
+        ReactDOM.render(<Component />, root);
 
-      expect('#root').not.toContainText('HOO BOY');
+        expect('#root').not.toContainText('HOO BOY');
+      });
+
+      it('can still chain callThrough', () => {
+        spyOnRender(Component).and.callThrough();
+
+        ReactDOM.render(<Component />, root);
+
+        expect('#root').toContainText('HOO BOY');
+      });
     });
 
     describe('toHaveBeenRenderedWithProps', () => {
       beforeEach(() => {
-        spyOnRender(Component).and.returnValue(null);
+        spyOnRender(Component);
         ReactDOM.render(<Component className="smokey-dokey"/>, root);
       });
 
@@ -54,7 +64,7 @@ describe('spyOnRender', () => {
 
     describe('toHaveBeenRendered', () => {
       beforeEach(() => {
-        spyOnRender(Component).and.returnValue(null);
+        spyOnRender(Component);
       });
 
       it('passes if component was rendered', () => {
@@ -72,21 +82,21 @@ describe('spyOnRender', () => {
     beforeEach(() => {
       Component = React.createClass({
         render() {
-          return(
+          return (
             <h1>HOO BOY</h1>
           );
         }
       });
     });
 
-   itDoesTheThing();
+    itDoesTheThing();
   });
 
   describe('with class extends', () => {
     beforeEach(() => {
       class Component extends React.Component {
         render() {
-          return(
+          return (
             <h1>HOO BOY</h1>
           );
         }
