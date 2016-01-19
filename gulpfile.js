@@ -6,9 +6,7 @@ var runSequence = require('run-sequence');
 
 gulp.task('default', ['spec']);
 
-gulp.task('spec', function() {
-  //var plugin = new (require('gulp-jasmine-browser/webpack/jasmine-plugin'))();
-
+function testAssetsStream(watch) {
   return gulp.src(['spec/**/*_spec.js'])
     .pipe(plugins.plumber())
     .pipe(webpack({
@@ -19,11 +17,24 @@ gulp.task('spec', function() {
           {test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader'}
         ]
       },
-      watch: true,
+      watch: watch,
       output: {filename: 'spec.js'}
-    }))
+    }));
+}
+
+gulp.task('spec', function() {
+  //var plugin = new (require('gulp-jasmine-browser/webpack/jasmine-plugin'))();
+
+  return testAssetsStream(true)
     .pipe(plugins.jasmineBrowser.specRunner())
     .pipe(plugins.jasmineBrowser.server({whenReady: plugins.whenReady}));
+});
+
+
+gulp.task('ci', function() {
+  return testAssetsStream(false)
+    .pipe(plugins.jasmineBrowser.specRunner({console: true}))
+    .pipe(plugins.jasmineBrowser.headless({driver: 'phantomjs'}));
 });
 
 gulp.task('clean-dist', function(done) {
