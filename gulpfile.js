@@ -1,6 +1,8 @@
 var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')();
 var webpack = require('webpack-stream');
+var del = require('del');
+var runSequence = require('run-sequence');
 
 gulp.task('default', ['spec']);
 
@@ -18,8 +20,36 @@ gulp.task('spec', function() {
         ]
       },
       watch: true,
-      output: {filename: 'spec.js' }
+      output: {filename: 'spec.js'}
     }))
     .pipe(plugins.jasmineBrowser.specRunner())
     .pipe(plugins.jasmineBrowser.server({whenReady: plugins.whenReady}));
+});
+
+gulp.task('clean-dist', function(done) {
+  del(['dist/'])
+    .then(function() { done() }, done);
+});
+
+gulp.task('build-js', function() {
+  return gulp.src(['index.js'])
+    .pipe(plugins.plumber())
+    .pipe(webpack({
+      module: {
+        loaders: [
+          {test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader'}
+        ]
+      },
+      output: {filename: 'index.js'}
+    }))
+    .pipe(gulp.dest('dist/'));
+});
+
+gulp.task('copy-files', function() {
+  return gulp.src(['package.json', 'README.md'], {base: '.'})
+    .pipe(gulp.dest('dist'));
+});
+
+gulp.task('build', ['clean-dist'], function(done) {
+  runSequence(['build-js', 'copy-files'], done);
 });

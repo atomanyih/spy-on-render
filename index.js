@@ -1,8 +1,8 @@
 const {spyOnRender, customMatchers} = require('./src/spy_on_render');
 
-const {jasmine} = window;
+const {jasmine} = global;
 
-window.spyOnRender = spyOnRender;
+global.spyOnRender = spyOnRender;
 
 beforeEach(() => {
   jasmine.addMatchers(customMatchers);
