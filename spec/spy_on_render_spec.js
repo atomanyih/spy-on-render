@@ -8,6 +8,28 @@ const ReactDOM = require('react-dom');
 describe('spyOnRender', () => {
   let Component;
 
+  function getExpectationResult(block) {
+    let expectationPassed, expectationMessage;
+
+    function magicExpect(actual) {
+      const expectation = expect(actual);
+
+      const addExpectationResultFake = (pass,result) => {
+        expectationPassed = pass;
+        expectationMessage = result.message;
+      };
+
+      expectation.addExpectationResult = addExpectationResultFake;
+      expectation.not.addExpectationResult = addExpectationResultFake;
+
+      return expectation
+    }
+
+    block(magicExpect);
+
+    return {passed: expectationPassed, message: expectationMessage}
+  }
+
   function itDoesTheThing() {
     it('sanity check', () => {
       ReactDOM.render(<Component />, root);
@@ -39,25 +61,41 @@ describe('spyOnRender', () => {
         ReactDOM.render(<Component className="smokey-dokey"/>, root);
       });
 
-      it('matches props', () => {
-        expect(Component).toHaveBeenRenderedWithProps({
-          className: 'smokey-dokey'
+      describe('positive matcher', () => {
+        it('matches props', () => {
+          expect(Component).toHaveBeenRenderedWithProps({
+            className: 'smokey-dokey'
+          });
+        });
+
+        it('errors helpfully when props do not match', () => {
+          const {passed, message} = getExpectationResult((expect) => {
+            expect(Component).toHaveBeenRenderedWithProps({
+              className: 'smokey-tokey'
+            });
+          });
+
+          expect(passed).toEqual(false);
+          expect(message).toMatch(/Expected Component to have been rendered with/);
         });
       });
 
-      it('errors', () => {
-        pending('how do ya test this');
-
-        expect(() => {
-          expect(Component).toHaveBeenRenderedWithProps({
-            className: 'smokey-tokey'
+      describe('negative matcher', () => {
+        it('can match negative', () => {
+          expect(Component).not.toHaveBeenRenderedWithProps({
+            className: 'hokey-pokey'
           });
-        }).toThrowError('Expected Component to have been rendered with props')
-      });
+        });
 
-      it('can match negative', () => {
-        expect(Component).not.toHaveBeenRenderedWithProps({
-          className: 'hokey-pokey'
+        it('errors helpfully when props match', () => {
+          const {passed, message} = getExpectationResult((expect) => {
+            expect(Component).not.toHaveBeenRenderedWithProps({
+              className: 'smokey-dokey'
+            });
+          });
+
+          expect(passed).toEqual(false);
+          expect(message).toMatch(/Expected Component not to have been rendered with/);
         });
       });
     });
@@ -67,13 +105,39 @@ describe('spyOnRender', () => {
         spyOnRender(Component);
       });
 
-      it('passes if component was rendered', () => {
-        ReactDOM.render(<Component />, root);
-        expect(Component).toHaveBeenRendered();
+      describe('positive matcher', () => {
+
+        it('passes if component was rendered', () => {
+          ReactDOM.render(<Component />, root);
+
+          expect(Component).toHaveBeenRendered();
+        });
+
+        it('errors helpfully if component was not rendered', () => {
+          const {passed, message} = getExpectationResult((expect) => {
+            expect(Component).toHaveBeenRendered();
+          });
+
+          expect(passed).toEqual(false);
+          expect(message).toMatch(/Expected Component to have been rendered/);
+        });
       });
 
-      it('matches negative', () => {
-        expect(Component).not.toHaveBeenRendered();
+      describe('negative matcher', () => {
+        it('passes if component was not rendered', () => {
+          expect(Component).not.toHaveBeenRendered();
+        });
+
+        it('errors helpfully if component was rendered', () => {
+          ReactDOM.render(<Component />, root);
+
+          const {passed, message} = getExpectationResult((expect) => {
+            expect(Component).not.toHaveBeenRendered();
+          });
+
+          expect(passed).toEqual(false);
+          expect(message).toMatch(/Expected Component not to have been rendered/);
+        });
       });
     });
   }
