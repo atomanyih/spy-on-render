@@ -1,3 +1,5 @@
+require('phantomjs-polyfill');
+
 require('jasmine_dom_matchers');
 const $ = require('jquery');
 

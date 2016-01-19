@@ -31,6 +31,7 @@
     "gulp-plumber": "^1.0.1",
     "jasmine_dom_matchers": "^1.1.0",
     "jquery": "^2.2.0",
+    "phantomjs-polyfill": "0.0.1",
     "react": "^0.14.6",
     "react-dom": "^0.14.6",
     "run-sequence": "^1.1.5",
