@@ -34,7 +34,7 @@ gulp.task('spec', function() {
 gulp.task('ci', function() {
   return testAssetsStream(false)
     .pipe(plugins.jasmineBrowser.specRunner({console: true}))
-    .pipe(plugins.jasmineBrowser.headless({driver: 'phantomjs'}));
+    .pipe(plugins.jasmineBrowser.phantomjs());
 });
 
 gulp.task('clean-dist', function(done) {
