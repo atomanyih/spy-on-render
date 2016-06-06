@@ -145,9 +145,14 @@ describe('spyOnRender', () => {
   describe('with React.createClass', () => {
     beforeEach(() => {
       Component = React.createClass({
+        componentDidMount() {
+          if(!this.refs.theThing) {
+            throw new Error('should not call lifecycle methods');
+          }
+        },
         render() {
           return (
-            <h1>HOO BOY</h1>
+            <h1 ref="theThing">HOO BOY</h1>
           );
         }
       });
@@ -159,9 +164,14 @@ describe('spyOnRender', () => {
   describe('with class extends', () => {
     beforeEach(() => {
       class Component extends React.Component {
+        componentDidMount() {
+          if(!this.refs.theThing) {
+            throw new Error('should not call lifecycle methods');
+          }
+        }
         render() {
           return (
-            <h1>HOO BOY</h1>
+            <h1 ref="theThing">HOO BOY</h1>
           );
         }
       }

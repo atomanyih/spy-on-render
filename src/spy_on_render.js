@@ -1,5 +1,21 @@
+import React from 'react';
+
+const REACT_LIFECYCLE_METHODS = [
+  'componentWillMount',
+  'componentDidMount',
+  'componentWillReceiveProps',
+  // 'shouldComponentUpdate',
+  'componentWillUpdate',
+  'componentDidUpdate',
+  'componentWillUnmount'
+];
+
 module.exports = {
   spyOnRender(componentClass) {
+    REACT_LIFECYCLE_METHODS.forEach((methodName) => (
+      spyOn(componentClass.prototype, methodName)
+    ));
+
     return spyOn(componentClass.prototype, 'render').and.returnValue(null);
   },
   customMatchers: {
