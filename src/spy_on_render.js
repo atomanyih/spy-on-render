@@ -10,6 +10,10 @@ const REACT_LIFECYCLE_METHODS = [
   'componentWillUnmount'
 ];
 
+function getDisplayName(componentClass) {
+  return componentClass.displayName || componentClass.name;
+}
+
 module.exports = {
   spyOnRender(componentClass) {
     REACT_LIFECYCLE_METHODS.forEach((methodName) => (
@@ -26,9 +30,8 @@ module.exports = {
 
           const mostRecentCall = actual.prototype.render.calls.mostRecent();
 
-          const displayClass = actual.displayName;
+          const displayClass = getDisplayName(actual);
           const displayExpected = jasmine.pp(expected);
-
 
           if (mostRecentCall) {
             const actualProps = mostRecentCall.object.props;
@@ -63,7 +66,7 @@ module.exports = {
 
           const mostRecentCall = actual.prototype.render.calls.mostRecent();
 
-          const displayClass = actual.displayName;
+          const displayClass = getDisplayName(actual);
 
           if(mostRecentCall) {
             result.pass = true;
