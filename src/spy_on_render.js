@@ -16,9 +16,11 @@ function getDisplayName(componentClass) {
 
 module.exports = {
   spyOnRender(componentClass) {
-    REACT_LIFECYCLE_METHODS.forEach((methodName) => (
-      spyOn(componentClass.prototype, methodName)
-    ));
+    REACT_LIFECYCLE_METHODS.forEach((methodName) => {
+      if(componentClass.prototype[methodName]) {
+        spyOn(componentClass.prototype, methodName)
+      }
+    });
 
     return spyOn(componentClass.prototype, 'render').and.returnValue(null);
   },
