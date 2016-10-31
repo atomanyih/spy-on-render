@@ -14,7 +14,7 @@ describe('spyOnRender', () => {
     function magicExpect(actual) {
       const expectation = expect(actual);
 
-      const addExpectationResultFake = (pass,result) => {
+      const addExpectationResultFake = (pass, result) => {
         expectationPassed = pass;
         expectationMessage = result.message;
       };
@@ -26,6 +26,8 @@ describe('spyOnRender', () => {
     }
 
     block(magicExpect);
+
+    console.log(expectationMessage);
 
     return {passed: expectationPassed, message: expectationMessage}
   }
@@ -58,7 +60,13 @@ describe('spyOnRender', () => {
     describe('toHaveBeenRenderedWithProps', () => {
       beforeEach(() => {
         spyOnRender(Component);
-        ReactDOM.render(<Component className="smokey-dokey"/>, root);
+        ReactDOM.render(
+          <div>
+            <Component className="smokey-dokey"/>
+            <Component className="hokey-pokey"/>
+          </div>,
+          root
+        );
       });
 
       describe('positive matcher', () => {
@@ -77,13 +85,14 @@ describe('spyOnRender', () => {
 
           expect(passed).toEqual(false);
           expect(message).toMatch(/Expected Component to have been rendered with/);
+          expect(message).toMatch(/but got/);
         });
       });
 
       describe('negative matcher', () => {
         it('can match negative', () => {
           expect(Component).not.toHaveBeenRenderedWithProps({
-            className: 'hokey-pokey'
+            className: 'stay-wokey'
           });
         });
 
@@ -146,7 +155,7 @@ describe('spyOnRender', () => {
     beforeEach(() => {
       Component = React.createClass({
         componentDidMount() {
-          if(!this.refs.theThing) {
+          if (!this.refs.theThing) {
             throw new Error('should not call lifecycle methods');
           }
         },
@@ -165,10 +174,11 @@ describe('spyOnRender', () => {
     beforeEach(() => {
       class Component extends React.Component {
         componentDidMount() {
-          if(!this.refs.theThing) {
+          if (!this.refs.theThing) {
             throw new Error('should not call lifecycle methods');
           }
         }
+
         render() {
           return (
             <h1 ref="theThing">HOO BOY</h1>
