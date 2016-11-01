@@ -8,7 +8,7 @@ var webpack = require('webpack-stream');
 var del = require('del');
 var runSequence = require('run-sequence');
 
-gulp.task('default', ['spec']);
+gulp.task('default', ['ci']);
 
 function testAssetsStream(watch) {
   return gulp.src(['spec/**/*_spec.js'])
