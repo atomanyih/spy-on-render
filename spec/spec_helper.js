@@ -1,5 +1,5 @@
 require('phantomjs-polyfill');
-require('phantomjs-polyfill-find')
+require('phantomjs-polyfill-find');
 require('babel-polyfill');
 
 require('jasmine_dom_matchers');
