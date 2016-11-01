@@ -1,5 +1,3 @@
-import React from 'react';
-
 const REACT_LIFECYCLE_METHODS = [
   'componentWillMount',
   'componentDidMount',
