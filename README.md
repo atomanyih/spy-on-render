@@ -53,3 +53,16 @@ expect(Component).toHaveBeenRenderedWithProps({
 });
 ```
 
+### Helpers
+
+what props were rendered last?
+
+```js
+propsOnLastRender(Component)
+```
+
+what props were rendered at some other point in time?
+
+```js
+propsOnRenderAt(Component, i)
+```
