@@ -34,11 +34,14 @@
     "gulp-load-plugins": "^1.2.0",
     "gulp-plumber": "^1.0.1",
     "jasmine_dom_matchers": "^1.1.0",
-    "jquery": "^2.2.0",
-    "phantomjs-polyfill": "0.0.1",
+    "jquery": "^3.1.1",
+    "phantomjs-polyfill": "0.0.2",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
     "run-sequence": "^1.1.5",
-    "webpack-stream": "^2.1.0"
+    "webpack-stream": "^3.2.0"
+  },
+  "dependencies": {
+    "phantomjs-prebuilt": "^2.1.13"
   }
 }
