@@ -1,3 +1,7 @@
+require('phantomjs-polyfill');
+require('phantomjs-polyfill-find');
+require('babel-polyfill');
+
 var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')();
 var webpack = require('webpack-stream');
