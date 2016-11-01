@@ -2,9 +2,6 @@ require('./spec_helper');
 
 require('../index');
 
-const React = require('react');
-const ReactDOM = require('react-dom');
-
 describe('spyOnRender', () => {
   let Component;
 
@@ -172,19 +169,7 @@ describe('spyOnRender', () => {
 
   describe('with class extends', () => {
     beforeEach(() => {
-      class Component extends React.Component {
-        componentDidMount() {
-          if (!this.refs.theThing) {
-            throw new Error('should not call lifecycle methods');
-          }
-        }
-
-        render() {
-          return (
-            <h1 ref="theThing">HOO BOY</h1>
-          );
-        }
-      }
+      Component = createComponentClass()
     });
 
     itDoesTheThing();
