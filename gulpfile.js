@@ -1,5 +1,3 @@
-require('phantomjs-polyfill');
-require('phantomjs-polyfill-find');
 require('babel-polyfill');
 
 var gulp = require('gulp');
