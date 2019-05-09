@@ -11,21 +11,21 @@ Object.assign(global, {
   $,
   React,
   ReactDOM,
-  createComponentClass() {
-  return class Component extends React.Component {
-    componentDidMount() {
-      if (!this.refs.theThing) {
-        throw new Error('should not call lifecycle methods');
+  createComponentClass () {
+    return class Component extends React.Component {
+      componentDidMount () {
+        if (!this.refs.theThing) {
+          throw new Error('should not call lifecycle methods');
+        }
       }
-    }
 
-    render() {
-      return (
-        <h1 ref="theThing">HOO BOY</h1>
-      );
-    }
-  };
-}
+      render () {
+        return (
+          <h1 ref="theThing">HOO BOY</h1>
+        );
+      }
+    };
+  }
 });
 
 beforeEach(() => {

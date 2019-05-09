@@ -1,10 +1,12 @@
 {
   "name": "spy-on-render",
-  "version": "0.2.0",
-  "description": "stub react render in jasmine",
-  "main": "index.js",
+  "version": "0.3.0",
+  "description": "stub react render in jest",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "build": "rollup -c"
   },
   "repository": {
     "type": "git",
@@ -16,32 +18,20 @@
     "url": "https://github.com/atomanyih/spy-on-render/issues"
   },
   "keywords": [
-    "jasmine",
+    "jest",
     "react"
   ],
   "homepage": "https://github.com/atomanyih/spy-on-render#readme",
   "devDependencies": {
-    "babel": "^6.3.26",
-    "babel-core": "^6.4.0",
-    "babel-loader": "^6.2.1",
-    "babel-plugin-transform-object-assign": "^6.3.13",
-    "babel-polyfill": "^6.16.0",
-    "babel-preset-es2015": "^6.3.13",
-    "babel-preset-react": "^6.3.13",
-    "babel-preset-stage-0": "^6.3.13",
-    "del": "^2.2.0",
-    "gulp": "^3.9.0",
-    "gulp-jasmine-browser": "^1.0.0",
-    "gulp-load-plugins": "^1.2.0",
-    "gulp-plumber": "^1.0.1",
-    "jasmine_dom_matchers": "^1.1.0",
-    "jquery": "^3.1.1",
-    "phantomjs-polyfill": "0.0.2",
-    "phantomjs-polyfill-find": "0.0.1",
-    "phantomjs-prebuilt": "^2.1.13",
-    "react": "^15.1.0",
-    "react-dom": "^15.1.0",
-    "run-sequence": "^1.1.5",
-    "webpack-stream": "^3.2.0"
+    "@babel/preset-env": "^7.4.4",
+    "@babel/preset-react": "^7.0.0",
+    "babel-jest": "^24.7.1",
+    "jest": "^24.7.1",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "rollup": "^1.11.0"
+  },
+  "peerDependencies": {
+    "jest": "24.x"
   }
 }
