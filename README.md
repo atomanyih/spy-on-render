@@ -1,20 +1,20 @@
 # spy-on-render [![Build Status](https://snap-ci.com/atomanyih/spy-on-render/branch/master/build_image)](https://snap-ci.com/atomanyih/spy-on-render/branch/master)
 
 
-Spy on React components in Jasmine tests.
-
-**DOES NOT WORK WITH FUNCTIONAL COMPONENTS**. They're functions!
+Spy on React components in Jest
 
 ## Installation
 
 ```
-npm install spy-on-render
+npm install --save-dev spy-on-render
 ```
 
-Put this in your `spec_helper.js`:
+Put this in your `setupTests.js`:
 
-```
-require('spy-on-render');
+```js
+import { Matchers } from 'spy-on-render';
+
+expect.extends(Matchers)
 ```
 
 
@@ -25,16 +25,20 @@ require('spy-on-render');
 Just call it:
 
 ```js
+import { spyOnRender } from 'spy-on-render';
+
 spyOnRender(Component);
 ```
 
-By default, it won't render anything. If you want to render normally:
+The component will render `null` and you can track how many times it has been rendered and with which props.
+
+### createComponentSpy
+
+For functional components, mock the module
 
 ```js
-spyOnRender(Component).and.callThrough();
+jest.mock('path/to/component', () => require('spy-on-render').createComponentSpy());
 ```
-
-`spyOnRender` returns a spy, so you can do whatever you want with it.
 
 ### Matchers
 
