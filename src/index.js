@@ -1,3 +1,7 @@
 import createComponentSpy from './createComponentSpy';
+import Matchers from './Matchers';
+import spyOnRender from './spyOnRender';
 
-export {createComponentSpy};
+export * from './helpers';
+
+export {createComponentSpy, Matchers, spyOnRender};

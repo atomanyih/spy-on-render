@@ -3,6 +3,7 @@ import Matchers from "../src/Matchers";
 import React from "react";
 
 import ComponentToTest from "./ComponentToTest";
+import { propsOnLastRender, propsOnRenderAt } from '../src/helpers';
 
 expect.extend(Matchers);
 
@@ -119,6 +120,49 @@ describe('createComponentSpy', () => {
         expect(pass).toEqual(true);
         expect(message()).toMatch(/Expected Component not to have been rendered/);
       });
+    });
+  });
+
+  describe('propsOnLastRender', () => {
+    const propsOnFirstRender = {foo: 'bar'};
+    const propsOnSecondRender = {foo: 'baz'};
+
+    beforeEach(() => {
+      ReactDOM.render(
+        <ComponentToTest {...propsOnFirstRender}/>,
+        root
+      );
+    });
+
+    it('returns props from last call to render', () => {
+      expect(propsOnLastRender(ComponentToTest)).toEqual(propsOnFirstRender);
+
+      ReactDOM.render(
+        <ComponentToTest {...propsOnSecondRender}/>,
+        root
+      );
+
+      expect(propsOnLastRender(ComponentToTest)).toEqual(propsOnSecondRender);
+    });
+  });
+
+  describe('propsOnRenderAt', () => {
+    const propsOnFirstRender = {foo: 'bar'};
+    const propsOnSecondRender = {foo: 'baz'};
+
+    beforeEach(() => {
+      ReactDOM.render(
+        <div>
+          <ComponentToTest {...propsOnFirstRender}/>
+          <ComponentToTest {...propsOnSecondRender}/>
+        </div>,
+        root
+      );
+    });
+
+    it('returns props from last call to render', () => {
+      expect(propsOnRenderAt(ComponentToTest, 0)).toEqual(propsOnFirstRender);
+      expect(propsOnRenderAt(ComponentToTest, 1)).toEqual(propsOnSecondRender);
     });
   });
 });
