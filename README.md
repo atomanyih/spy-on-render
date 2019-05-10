@@ -34,7 +34,7 @@ The component will render `null` and you can track how many times it has been re
 
 ### createComponentSpy
 
-For functional components, mock the module
+For functional components, use a jest mock
 
 ```js
 jest.mock('path/to/component', () => require('spy-on-render').createComponentSpy());
