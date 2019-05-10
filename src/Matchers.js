@@ -5,11 +5,15 @@ function getDisplayName(componentClass) {
 
 
 const Matchers = {
-
   toHaveBeenRendered (Component) {
-    const pass = Component.prototype.render.mock.calls.length > 0;
+    let isRendered;
+    if(Component._renderSpy) {
+      isRendered = Component._renderSpy.mock.calls.length > 0
+    } else {
+      isRendered = Component.prototype.render.mock.calls.length > 0;
+    }
 
-    if(pass) {
+    if(isRendered) {
       return {
         pass: true,
         message: () => `Expected ${getDisplayName(Component)} not to have been rendered`
@@ -23,8 +27,15 @@ const Matchers = {
   },
 
   toHaveBeenRenderedWithProps (Component, expectedProps) {
-    const propsByRender = Component.prototype.render.mock.instances
-      .map(({props}) => props);
+    let propsByRender;
+
+    if(Component._renderSpy) {
+      propsByRender = Component._renderSpy.mock.calls
+        .map(([props]) => props)
+    } else {
+      propsByRender = Component.prototype.render.mock.instances
+        .map(({props}) => props);
+    }
 
     const matchingProps = propsByRender.find((props) => {
       return this.equals(
