@@ -32,6 +32,10 @@
     "rollup": "^1.11.0"
   },
   "peerDependencies": {
-    "jest": "24.x"
+    "jest": "24.x",
+    "@types/jest": "24.x"
+  },
+  "dependencies": {
+    "@types/jest": "^24.0.12"
   }
 }

@@ -1,50 +1,39 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Matchers from '../src/Matchers';
-import spyOnRender from '../src/spyOnRender';
-import { getPropsOnLastRender, getPropsOnRenderAt } from '../src/helpers';
+import ReactDOM from "react-dom";
+import Matchers from "../src/Matchers";
+import React from "react";
+
+import ComponentToTest from "./ComponentToTest";
+import { getPropsOnLastRender, getPropsOnRenderAt, getPropsByRender } from '../src';
 
 expect.extend(Matchers);
 
-const createComponentClass = () => {
-  return class Component extends React.Component {
-    componentDidMount () {
-      if (!this.refs.theThing) {
-        throw new Error('should not call lifecycle methods');
-      }
+
+jest.mock('./ComponentToTest', () => require('../src/index').createComponentSpy());
+
+declare global {
+  namespace jest {
+    interface Matchers<R> {
+      toHaveBeenRenderedWithProps: (expectedProps: object) => object;
+      toHaveBeenRendered: () => void;
     }
 
-    render () {
-      return (
-        <h1 ref="theThing">HOO BOY</h1>
-      );
+    interface Expect {
+      toHaveBeenRenderedWithProps: (expectedProps: object) => object;
+      toHaveBeenRendered: () => void;
     }
-  };
-};
+  }
+}
 
-describe('spyOnRender', () => {
+describe('createComponentSpy', () => {
   let root;
   beforeEach(() => {
     root = document.createElement('div');
     document.body.appendChild(root);
   });
-  let Component;
-
-  beforeEach(() => {
-    Component = createComponentClass();
-  });
-
-  it('sanity check', () => {
-    ReactDOM.render(<Component />, root);
-
-    expect(root.textContent).toContain('HOO BOY');
-  });
 
   describe('spy', () => {
     it('renders nothing', () => {
-      spyOnRender(Component);
-
-      ReactDOM.render(<Component />, root);
+      ReactDOM.render(<ComponentToTest />, root);
 
       expect(root).not.toContain('HOO BOY');
     });
@@ -52,11 +41,10 @@ describe('spyOnRender', () => {
 
   describe('toHaveBeenRenderedWithProps', () => {
     beforeEach(() => {
-      spyOnRender(Component);
       ReactDOM.render(
         <div>
-          <Component className="smokey-dokey" />
-          <Component className="hokey-pokey" />
+          <ComponentToTest className="smokey-dokey" />
+          <ComponentToTest className="hokey-pokey" />
         </div>,
         root
       );
@@ -64,14 +52,14 @@ describe('spyOnRender', () => {
 
     describe('positive matcher', () => {
       it('matches props', () => {
-        expect(Component).toHaveBeenRenderedWithProps({
+        expect(ComponentToTest).toHaveBeenRenderedWithProps({
           className: 'smokey-dokey'
         });
       });
 
       it('errors when props do not match', () => {
         expect(
-          () => expect(Component).toHaveBeenRenderedWithProps({
+          () => expect(ComponentToTest).toHaveBeenRenderedWithProps({
             className: 'smokey-tokey'
           })
         ).toThrowError();
@@ -79,7 +67,7 @@ describe('spyOnRender', () => {
 
       it('errors helpfully when props do not match', () => {
         try {
-          expect(Component).toHaveBeenRenderedWithProps({
+          expect(ComponentToTest).toHaveBeenRenderedWithProps({
             className: 'smokey-tokey'
           })
         } catch (e) {
@@ -91,14 +79,14 @@ describe('spyOnRender', () => {
 
     describe('negative matcher', () => {
       it('can match negative', () => {
-        expect(Component).not.toHaveBeenRenderedWithProps({
+        expect(ComponentToTest).not.toHaveBeenRenderedWithProps({
           className: 'stay-wokey'
         });
       });
 
       it('errors when props do match', () => {
         expect(
-          () => expect(Component).not.toHaveBeenRenderedWithProps({
+          () => expect(ComponentToTest).not.toHaveBeenRenderedWithProps({
             className: 'smokey-dokey'
           })
         ).toThrowError();
@@ -106,7 +94,7 @@ describe('spyOnRender', () => {
 
       it('errors helpfully when props match', () => {
         try {
-          expect(Component).not.toHaveBeenRenderedWithProps({
+          expect(ComponentToTest).not.toHaveBeenRenderedWithProps({
             className: 'smokey-dokey'
           })
         } catch (e) {
@@ -117,20 +105,15 @@ describe('spyOnRender', () => {
   });
 
   describe('toHaveBeenRendered', () => {
-    beforeEach(() => {
-      spyOnRender(Component);
-    });
-
     describe('positive matcher', () => {
-
       it('passes if component was rendered', () => {
-        ReactDOM.render(<Component />, root);
+        ReactDOM.render(<ComponentToTest />, root);
 
-        expect(Component).toHaveBeenRendered();
+        expect(ComponentToTest).toHaveBeenRendered();
       });
 
       it('errors helpfully if component was not rendered', () => {
-        const { pass, message } = Matchers.toHaveBeenRendered(Component);
+        const { pass, message } = Matchers.toHaveBeenRendered(ComponentToTest);
 
         expect(pass).toEqual(false);
         expect(message()).toMatch(/Expected Component to have been rendered/);
@@ -139,13 +122,13 @@ describe('spyOnRender', () => {
 
     describe('negative matcher', () => {
       it('passes if component was not rendered', () => {
-        expect(Component).not.toHaveBeenRendered();
+        expect(ComponentToTest).not.toHaveBeenRendered();
       });
 
       it('errors helpfully if component was rendered', () => {
-        ReactDOM.render(<Component />, root);
+        ReactDOM.render(<ComponentToTest />, root);
 
-        const { pass, message } = Matchers.toHaveBeenRendered(Component);
+        const { pass, message } = Matchers.toHaveBeenRendered(ComponentToTest);
 
         expect(pass).toEqual(true);
         expect(message()).toMatch(/Expected Component not to have been rendered/);
@@ -158,23 +141,21 @@ describe('spyOnRender', () => {
     const propsOnSecondRender = {foo: 'baz'};
 
     beforeEach(() => {
-      spyOnRender(Component);
-
       ReactDOM.render(
-        <Component {...propsOnFirstRender}/>,
+        <ComponentToTest {...propsOnFirstRender}/>,
         root
       );
     });
 
     it('returns props from last call to render', () => {
-      expect(getPropsOnLastRender(Component)).toEqual(propsOnFirstRender);
+      expect(getPropsOnLastRender(ComponentToTest)).toEqual(propsOnFirstRender);
 
       ReactDOM.render(
-        <Component {...propsOnSecondRender}/>,
+        <ComponentToTest {...propsOnSecondRender}/>,
         root
       );
 
-      expect(getPropsOnLastRender(Component)).toEqual(propsOnSecondRender);
+      expect(getPropsOnLastRender(ComponentToTest)).toEqual(propsOnSecondRender);
     });
   });
 
@@ -183,26 +164,37 @@ describe('spyOnRender', () => {
     const propsOnSecondRender = {foo: 'baz'};
 
     beforeEach(() => {
-      spyOnRender(Component);
-
       ReactDOM.render(
         <div>
-          <Component {...propsOnFirstRender}/>
-          <Component {...propsOnSecondRender}/>
+          <ComponentToTest {...propsOnFirstRender}/>
+          <ComponentToTest {...propsOnSecondRender}/>
         </div>,
         root
       );
     });
 
     it('returns props from last call to render', () => {
-      expect(getPropsOnRenderAt(Component, 0)).toEqual(propsOnFirstRender);
-      expect(getPropsOnRenderAt(Component, 1)).toEqual(propsOnSecondRender);
+      expect(getPropsOnRenderAt(ComponentToTest, 0)).toEqual(propsOnFirstRender);
+      expect(getPropsOnRenderAt(ComponentToTest, 1)).toEqual(propsOnSecondRender);
     });
   });
 
-  it('does not pollute', () => {
-    ReactDOM.render(<Component />, root);
+  describe('getPropsByRender', () => {
+    const propsOnFirstRender = {foo: 'bar'};
+    const propsOnSecondRender = {foo: 'baz'};
 
-    expect(root.textContent).toContain('HOO BOY');
+    beforeEach(() => {
+      ReactDOM.render(
+        <div>
+          <ComponentToTest {...propsOnFirstRender}/>
+          <ComponentToTest {...propsOnSecondRender}/>
+        </div>,
+        root
+      );
+    });
+
+    it('returns props from last call to render', () => {
+      expect(getPropsByRender(ComponentToTest)).toEqual([propsOnFirstRender, propsOnSecondRender]);
+    });
   });
 });
