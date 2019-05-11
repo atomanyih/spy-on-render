@@ -1,15 +1,12 @@
+import { getPropsByRender } from './helpers';
+
 function getDisplayName (componentClass) {
   return componentClass.displayName || componentClass.name;
 }
 
 const Matchers = {
   toHaveBeenRendered (Component) {
-    let isRendered;
-    if (Component._renderSpy) {
-      isRendered = Component._renderSpy.mock.calls.length > 0;
-    } else {
-      isRendered = Component.prototype.render.mock.calls.length > 0;
-    }
+    const isRendered = getPropsByRender(Component).length > 0;
 
     if (isRendered) {
       return {
@@ -25,15 +22,7 @@ const Matchers = {
   },
 
   toHaveBeenRenderedWithProps (Component, expectedProps) {
-    let propsByRender;
-
-    if (Component._renderSpy) {
-      propsByRender = Component._renderSpy.mock.calls
-        .map(([props]) => props);
-    } else {
-      propsByRender = Component.prototype.render.mock.instances
-        .map(({ props }) => props);
-    }
+    const propsByRender = getPropsByRender(Component);
 
     const matchingProps = propsByRender.find((props) => {
       return this.equals(

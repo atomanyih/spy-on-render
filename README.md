@@ -70,3 +70,9 @@ what props were rendered at some other point in time?
 ```js
 propsOnRenderAt(Component, i)
 ```
+
+all props in render order
+
+```js
+getPropsByRender(Component)
+```

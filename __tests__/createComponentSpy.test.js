@@ -3,7 +3,7 @@ import Matchers from "../src/Matchers";
 import React from "react";
 
 import ComponentToTest from "./ComponentToTest";
-import { propsOnLastRender, propsOnRenderAt } from '../src/helpers';
+import { propsOnLastRender, propsOnRenderAt, getPropsByRender } from '../src';
 
 expect.extend(Matchers);
 
@@ -163,6 +163,25 @@ describe('createComponentSpy', () => {
     it('returns props from last call to render', () => {
       expect(propsOnRenderAt(ComponentToTest, 0)).toEqual(propsOnFirstRender);
       expect(propsOnRenderAt(ComponentToTest, 1)).toEqual(propsOnSecondRender);
+    });
+  });
+
+  describe('getPropsByRender', () => {
+    const propsOnFirstRender = {foo: 'bar'};
+    const propsOnSecondRender = {foo: 'baz'};
+
+    beforeEach(() => {
+      ReactDOM.render(
+        <div>
+          <ComponentToTest {...propsOnFirstRender}/>
+          <ComponentToTest {...propsOnSecondRender}/>
+        </div>,
+        root
+      );
+    });
+
+    it('returns props from last call to render', () => {
+      expect(getPropsByRender(ComponentToTest)).toEqual([propsOnFirstRender, propsOnSecondRender]);
     });
   });
 });

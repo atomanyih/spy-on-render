@@ -1,26 +1,19 @@
 export const propsOnLastRender = (Component) => {
-  let propsByRender;
-
-  if(Component._renderSpy) {
-    propsByRender = Component._renderSpy.mock.calls
-      .map(([props]) => props)
-  } else {
-    propsByRender = Component.prototype.render.mock.instances
-      .map(({props}) => props);
-  }
+  const propsByRender = getPropsByRender(Component);
 
   return propsByRender[propsByRender.length - 1];
 };
+
 export const propsOnRenderAt = (Component, i) => {
-  let propsByRender;
+  return getPropsByRender(Component)[i]
+};
 
-  if(Component._renderSpy) {
-    propsByRender = Component._renderSpy.mock.calls
-      .map(([props]) => props)
+export const getPropsByRender = (Component) => {
+  if (Component._renderSpy) {
+    return Component._renderSpy.mock.calls
+      .map(([props]) => props);
   } else {
-    propsByRender = Component.prototype.render.mock.instances
-      .map(({props}) => props);
+    return Component.prototype.render.mock.instances
+      .map(({ props }) => props);
   }
-
-  return propsByRender[i];
 };
