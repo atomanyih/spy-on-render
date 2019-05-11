@@ -1,19 +1,17 @@
-
-function getDisplayName(componentClass) {
+function getDisplayName (componentClass) {
   return componentClass.displayName || componentClass.name;
 }
-
 
 const Matchers = {
   toHaveBeenRendered (Component) {
     let isRendered;
-    if(Component._renderSpy) {
-      isRendered = Component._renderSpy.mock.calls.length > 0
+    if (Component._renderSpy) {
+      isRendered = Component._renderSpy.mock.calls.length > 0;
     } else {
       isRendered = Component.prototype.render.mock.calls.length > 0;
     }
 
-    if(isRendered) {
+    if (isRendered) {
       return {
         pass: true,
         message: () => `Expected ${getDisplayName(Component)} not to have been rendered`
@@ -29,12 +27,12 @@ const Matchers = {
   toHaveBeenRenderedWithProps (Component, expectedProps) {
     let propsByRender;
 
-    if(Component._renderSpy) {
+    if (Component._renderSpy) {
       propsByRender = Component._renderSpy.mock.calls
-        .map(([props]) => props)
+        .map(([props]) => props);
     } else {
       propsByRender = Component.prototype.render.mock.instances
-        .map(({props}) => props);
+        .map(({ props }) => props);
     }
 
     const matchingProps = propsByRender.find((props) => {
@@ -47,18 +45,24 @@ const Matchers = {
     const displayClass = getDisplayName(Component);
     const displayExpected = this.utils.printExpected(expectedProps);
 
-    if(matchingProps) {
+    if (matchingProps) {
       return {
         pass: true,
         message: () => `Expected ${displayClass} not to have been rendered with props ${displayExpected}`
-      }
+      };
     }
 
-    const displayActual = this.utils.printReceived(propsByRender);
+    const displayActual = propsByRender.map((props) => this.utils.printReceived(props)).join('\n');
+
     return {
       pass: !!matchingProps,
-      message: () => `Expected ${displayClass} to have been rendered with props ${displayExpected}, but got ${displayActual}`
-    }
+      message: () =>
+        `Expected ${displayClass} to have been rendered with props:
+${displayExpected}
+ 
+but was rendered with:
+${displayActual}`
+    };
   }
 };
 

@@ -59,7 +59,7 @@ describe('createComponentSpy', () => {
           })
         } catch (e) {
           expect(e.message).toMatch(/Expected Component to have been rendered with/);
-          expect(e.message).toMatch(/but got/);
+          expect(e.message).toMatch(/but was rendered with/);
         }
       });
     });
