@@ -3,7 +3,7 @@ import Matchers from "../src/Matchers";
 import React from "react";
 
 import ComponentToTest from "./ComponentToTest";
-import { propsOnLastRender, propsOnRenderAt, getPropsByRender } from '../src';
+import { getPropsOnLastRender, getPropsOnRenderAt, getPropsByRender } from '../src';
 
 expect.extend(Matchers);
 
@@ -123,7 +123,7 @@ describe('createComponentSpy', () => {
     });
   });
 
-  describe('propsOnLastRender', () => {
+  describe('getPropsOnLastRender', () => {
     const propsOnFirstRender = {foo: 'bar'};
     const propsOnSecondRender = {foo: 'baz'};
 
@@ -135,18 +135,18 @@ describe('createComponentSpy', () => {
     });
 
     it('returns props from last call to render', () => {
-      expect(propsOnLastRender(ComponentToTest)).toEqual(propsOnFirstRender);
+      expect(getPropsOnLastRender(ComponentToTest)).toEqual(propsOnFirstRender);
 
       ReactDOM.render(
         <ComponentToTest {...propsOnSecondRender}/>,
         root
       );
 
-      expect(propsOnLastRender(ComponentToTest)).toEqual(propsOnSecondRender);
+      expect(getPropsOnLastRender(ComponentToTest)).toEqual(propsOnSecondRender);
     });
   });
 
-  describe('propsOnRenderAt', () => {
+  describe('getPropsOnRenderAt', () => {
     const propsOnFirstRender = {foo: 'bar'};
     const propsOnSecondRender = {foo: 'baz'};
 
@@ -161,8 +161,8 @@ describe('createComponentSpy', () => {
     });
 
     it('returns props from last call to render', () => {
-      expect(propsOnRenderAt(ComponentToTest, 0)).toEqual(propsOnFirstRender);
-      expect(propsOnRenderAt(ComponentToTest, 1)).toEqual(propsOnSecondRender);
+      expect(getPropsOnRenderAt(ComponentToTest, 0)).toEqual(propsOnFirstRender);
+      expect(getPropsOnRenderAt(ComponentToTest, 1)).toEqual(propsOnSecondRender);
     });
   });
 

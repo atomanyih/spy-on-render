@@ -1,12 +1,16 @@
-export const propsOnLastRender = (Component) => {
+export const getPropsOnLastRender = (Component) => {
   const propsByRender = getPropsByRender(Component);
 
   return propsByRender[propsByRender.length - 1];
 };
 
-export const propsOnRenderAt = (Component, i) => {
-  return getPropsByRender(Component)[i]
+export const propsOnLastRender = getPropsOnLastRender;
+
+export const getPropsOnRenderAt = (Component, i) => {
+  return getPropsByRender(Component)[i];
 };
+
+export const propsOnRenderAt = getPropsOnRenderAt;
 
 export const getPropsByRender = (Component) => {
   if (Component._renderSpy) {

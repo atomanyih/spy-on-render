@@ -62,13 +62,13 @@ expect(Component).toHaveBeenRenderedWithProps({
 what props were rendered last?
 
 ```js
-propsOnLastRender(Component)
+getPropsOnLastRender(Component)
 ```
 
 what props were rendered at some other point in time?
 
 ```js
-propsOnRenderAt(Component, i)
+getPropsOnRenderAt(Component, i)
 ```
 
 all props in render order
