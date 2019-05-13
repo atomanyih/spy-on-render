@@ -1,4 +1,4 @@
-# spy-on-render [![Build Status](https://snap-ci.com/atomanyih/spy-on-render/branch/master/build_image)](https://snap-ci.com/atomanyih/spy-on-render/branch/master)
+# spy-on-render
 
 
 Spy on React components in Jest
@@ -38,6 +38,16 @@ For functional components, use `jest.mock`
 
 ```js
 jest.mock('path/to/component', () => require('spy-on-render').createComponentSpy());
+```
+
+You can also pass a render function if you want to render something specific
+
+```js
+// render children
+jest.mock('path/to/component', () => require('spy-on-render').createComponentSpy((props) => <div>{props.children}</div>));
+
+// render testId for use with react-testing-library
+jest.mock('path/to/component', () => require('spy-on-render').createComponentSpy(() => <div data-testid="my-component"/>));
 ```
 
 ### Matchers

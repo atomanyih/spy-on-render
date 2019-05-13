@@ -2,13 +2,12 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-const createComponentSpy = () => {
+const createComponentSpy = (renderFn = () => null) => {
   const spy = jest.fn();
-
 
   const Component = (props) => {
     spy(props);
-    return null
+    return renderFn(props)
   };
 
   Component._renderSpy = spy;
@@ -16,21 +15,39 @@ const createComponentSpy = () => {
   return Component
 };
 
-function getDisplayName(componentClass) {
+const getPropsOnLastRender = (Component) => {
+  const propsByRender = getPropsByRender(Component);
+
+  return propsByRender[propsByRender.length - 1];
+};
+
+const propsOnLastRender = getPropsOnLastRender;
+
+const getPropsOnRenderAt = (Component, i) => {
+  return getPropsByRender(Component)[i];
+};
+
+const propsOnRenderAt = getPropsOnRenderAt;
+
+const getPropsByRender = (Component) => {
+  if (Component._renderSpy) {
+    return Component._renderSpy.mock.calls
+      .map(([props]) => props);
+  } else {
+    return Component.prototype.render.mock.instances
+      .map(({ props }) => props);
+  }
+};
+
+function getDisplayName (componentClass) {
   return componentClass.displayName || componentClass.name;
 }
 
-
 const Matchers = {
   toHaveBeenRendered (Component) {
-    let isRendered;
-    if(Component._renderSpy) {
-      isRendered = Component._renderSpy.mock.calls.length > 0;
-    } else {
-      isRendered = Component.prototype.render.mock.calls.length > 0;
-    }
+    const isRendered = getPropsByRender(Component).length > 0;
 
-    if(isRendered) {
+    if (isRendered) {
       return {
         pass: true,
         message: () => `Expected ${getDisplayName(Component)} not to have been rendered`
@@ -44,15 +61,7 @@ const Matchers = {
   },
 
   toHaveBeenRenderedWithProps (Component, expectedProps) {
-    let propsByRender;
-
-    if(Component._renderSpy) {
-      propsByRender = Component._renderSpy.mock.calls
-        .map(([props]) => props);
-    } else {
-      propsByRender = Component.prototype.render.mock.instances
-        .map(({props}) => props);
-    }
+    const propsByRender = getPropsByRender(Component);
 
     const matchingProps = propsByRender.find((props) => {
       return this.equals(
@@ -64,18 +73,24 @@ const Matchers = {
     const displayClass = getDisplayName(Component);
     const displayExpected = this.utils.printExpected(expectedProps);
 
-    if(matchingProps) {
+    if (matchingProps) {
       return {
         pass: true,
         message: () => `Expected ${displayClass} not to have been rendered with props ${displayExpected}`
-      }
+      };
     }
 
-    const displayActual = this.utils.printReceived(propsByRender);
+    const displayActual = propsByRender.map((props) => this.utils.printReceived(props)).join('\n');
+
     return {
       pass: !!matchingProps,
-      message: () => `Expected ${displayClass} to have been rendered with props ${displayExpected}, but got ${displayActual}`
-    }
+      message: () =>
+        `Expected ${displayClass} to have been rendered with props:
+${displayExpected}
+ 
+but was rendered with:
+${displayActual}`
+    };
   }
 };
 
@@ -99,35 +114,11 @@ const spyOnRender = (componentClass) => {
   return jest.spyOn(componentClass.prototype, 'render').mockReturnValue(null);
 };
 
-const propsOnLastRender = (Component) => {
-  let propsByRender;
-
-  if(Component._renderSpy) {
-    propsByRender = Component._renderSpy.mock.calls
-      .map(([props]) => props);
-  } else {
-    propsByRender = Component.prototype.render.mock.instances
-      .map(({props}) => props);
-  }
-
-  return propsByRender[propsByRender.length - 1];
-};
-const propsOnRenderAt = (Component, i) => {
-  let propsByRender;
-
-  if(Component._renderSpy) {
-    propsByRender = Component._renderSpy.mock.calls
-      .map(([props]) => props);
-  } else {
-    propsByRender = Component.prototype.render.mock.instances
-      .map(({props}) => props);
-  }
-
-  return propsByRender[i];
-};
-
 exports.Matchers = Matchers;
 exports.createComponentSpy = createComponentSpy;
+exports.getPropsByRender = getPropsByRender;
+exports.getPropsOnLastRender = getPropsOnLastRender;
+exports.getPropsOnRenderAt = getPropsOnRenderAt;
 exports.propsOnLastRender = propsOnLastRender;
 exports.propsOnRenderAt = propsOnRenderAt;
 exports.spyOnRender = spyOnRender;
