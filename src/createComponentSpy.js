@@ -1,10 +1,9 @@
-const createComponentSpy = () => {
+const createComponentSpy = (renderFn = () => null) => {
   const spy = jest.fn();
-
 
   const Component = (props) => {
     spy(props);
-    return null
+    return renderFn(props)
   };
 
   Component._renderSpy = spy;

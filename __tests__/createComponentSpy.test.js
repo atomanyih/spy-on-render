@@ -20,9 +20,19 @@ describe('createComponentSpy', () => {
 
   describe('spy', () => {
     it('renders nothing', () => {
-      ReactDOM.render(<ComponentToTest />, root);
+      expect(() => {
+        ReactDOM.render(<ComponentToTest />, root);
+      }).not.toThrow()
+    });
+  });
 
-      expect(root).not.toContain('HOO BOY');
+  describe('renderFn - Render function override', () => {
+    it('calls renderFn when rendering', () => {
+      const ComponentWithRenderOverride = require('../src/index').createComponentSpy(({someProp}) => <div>{someProp}</div>)
+
+      ReactDOM.render(<ComponentWithRenderOverride someProp="hello"/>, root);
+
+      expect(root.textContent).toContain('hello');
     });
   });
 
